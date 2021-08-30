@@ -1,15 +1,25 @@
 const net = require('net');
+const http = require('http');
 
 const port = 7070;
 const host = '127.0.0.1';
 const sockets = [];
 
-const server = net.createServer();
-server.listen(port, host, () => {
+const httpServer = http.createServer(((request, response) => {
+    const ipAddress = request.connection.localAddress;
+    response.setHeader('Content-Type', 'text/plain');
+    response.end(ipAddress);
+}))
+httpServer.listen(80, host, () => {
+    console.log('HTTP Server is running on port 80')
+})
+
+const tcpServer = net.createServer();
+tcpServer.listen(port, host, () => {
     console.log('TCP Server is running on port ' + port + '.');
 });
 
-server.on('connection', function(socket) {
+tcpServer.on('connection', function(socket) {
     socket.setEncoding('binary');
     console.log('CONNECTED: ' + socket.remoteAddress + ':' + socket.remotePort);
     sockets.push(socket);
@@ -25,7 +35,6 @@ server.on('connection', function(socket) {
     const handleData = (data) => {
         try {
             const object = JSON.parse(data);
-            // console.log(object)
             sockets.forEach(s => {
                 if (s.remoteAddress !== socket.remoteAddress || s.remotePort !== socket.remotePort) {
                     s.write(data);
