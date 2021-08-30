@@ -22,7 +22,7 @@ function createTcpServer() {
         console.log('TCP Server is running on port ' + port + '.');
     });
     tcpServer.on('connection', function(socket) {
-        socket.setEncoding('binary');
+        // socket.setEncoding('binary');
         console.log('CONNECTED: ' + socket.remoteAddress + ':' + socket.remotePort);
         sockets.push(socket);
         let data = '';
