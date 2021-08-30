@@ -1,19 +1,9 @@
 const net = require('net');
-const http = require('http');
 
-const port = 7070;
-const httpPort = parseInt(process.env.PORT) || 3000;
+const port = parseInt(process.env.PORT) || 3000;
+console.log(port);
 const host = '127.0.0.1';
 const sockets = [];
-
-const httpServer = http.createServer(((request, response) => {
-    const ipAddress = request.connection.localAddress;
-    response.setHeader('Content-Type', 'text/plain');
-    response.end(ipAddress);
-}))
-httpServer.listen(httpPort, () => {
-    console.log('HTTP Server is running on port ' + httpPort + '.')
-})
 
 const tcpServer = net.createServer();
 tcpServer.listen(port, host, () => {
