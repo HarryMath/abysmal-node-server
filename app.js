@@ -37,6 +37,7 @@ function createTcpServer() {
         const handleData = (data) => {
             try {
                 const object = JSON.parse(data);
+                console.log(object)
                 sockets.forEach(s => {
                     if (s.remoteAddress !== socket.remoteAddress || s.remotePort !== socket.remotePort) {
                         s.write(data);
