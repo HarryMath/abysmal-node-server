@@ -10,8 +10,8 @@ const httpServer = http.createServer(((request, response) => {
     response.setHeader('Content-Type', 'text/plain');
     response.end(ipAddress);
 }))
-httpServer.listen('/defineIP',() => {
-    console.log('HTTP Server is running on port 80')
+httpServer.listen(() => {
+    console.log('HTTP Server is running')
 })
 
 const tcpServer = net.createServer();
