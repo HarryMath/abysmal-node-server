@@ -1,7 +1,6 @@
 const net = require('net');
 
-const port = parseInt(process.env.PORT) || 3000;
-console.log(port);
+const port = parseInt(process.env.PORT) || 80;
 const host = '127.0.0.1';
 const sockets = [];
 
