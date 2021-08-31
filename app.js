@@ -57,7 +57,14 @@ function createTcpServer() {
             console.log('players amount: ' + sockets.length);
         }
 
-        socket.on('error', handleDisconnect);
-        socket.on('close', handleDisconnect);
+        socket.on('error', error => {
+            console.log('error connection on ' + socket.remoteAddress + ':')
+            console.log(error)
+            handleDisconnect();
+        });
+        socket.on('close', () => {
+            console.log('closed connection on ' + socket.remoteAddress)
+            handleDisconnect();
+        });
     });
 }
