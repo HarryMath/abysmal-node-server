@@ -18,7 +18,7 @@ setTimeout(createTcpServer, 3000);
 function createTcpServer() {
     httpServer.close();
     const tcpServer = net.createServer();
-    tcpServer.listen(port, host, () => {
+    tcpServer.listen(port,() => {
         console.log('TCP Server is running on port ' + port + '.');
     });
     tcpServer.on('connection', function(socket) {
