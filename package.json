@@ -2,13 +2,12 @@
   "name": "game-server",
   "version": "1.0.0",
   "description": "",
-  "main": "serverDocker.js",
+  "main": "server.js",
   "engines": {
     "node": "14.15.1"
   },
   "scripts": {
-    "dockerStart": "node serverDocker.js",
-    "start": "node serverHeroku.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
