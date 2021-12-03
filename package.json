@@ -2,12 +2,13 @@
   "name": "game-server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "tcpServer.js",
   "engines": {
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node tcpServer.js",
+    "startUpd": "node udpServer.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "@types/node": "^16.7.2"
   },
   "dependencies": {
+    "bson": "^4.5.2",
     "esm": "^3.2.25"
   }
 }

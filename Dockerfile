@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 4380
 ENV PORT=4380
-CMD [ "node", "server.js" ]
+CMD [ "node", "tcpServer.js" ]

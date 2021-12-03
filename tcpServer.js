@@ -17,7 +17,7 @@ function createTcpServer() {
     tcpServer.on('connection', function (socket) {
         const player = {socket, generationId: false, ship: {}};
         players.push(player);
-        // socket.setNoDelay(true);
+        socket.setNoDelay(true);
 
         console.log('CONNECTED: ' + socket.remoteAddress);
         console.log('players amount: ' + players.length);
@@ -54,6 +54,7 @@ function createTcpServer() {
 function handleData(player, data) {
     try {
         const dataPackage = JSON.parse(data);
+        console.log(data);
         if (dataPackage.hasOwnProperty('playerId')) { // request other player data
             const requestedPlayer = players.find(p => p.generationId === dataPackage.playerId);
             if (requestedPlayer) {
