@@ -1,0 +1,47 @@
+const http = require('http');
+const { exec } = require('child_process');
+
+const clusterHttpPort = 22;
+let port = 8081;
+
+const handleServerLogs = (port) => {
+  return (err, stdout, stderr) => {
+    if (err) {
+      console.error(`node not started on port ${port}. ${err}`);
+    }
+    if (stdout && stdout.length) {
+      console.debug(`stdout [${port}]: ${stdout}`);
+    }
+    if (stderr && stderr.length) {
+      console.warn(`stderr [${port}]: ${stderr}`);
+    }
+  };
+};
+
+const createServer = ( arguments = '' ) => {
+  const serverPort = port++;
+  const command = `node server/server.js port:${serverPort} ${arguments}`.trim();
+  console.debug('trying to launch server: ' + command);
+  let process = exec(command, handleServerLogs(serverPort));
+  process.on('exit', code => {
+    console.debug(`node on port ${serverPort} closed with code ${code}`);
+    process = null;
+  });
+};
+
+const requestHandler = function (req, res) {
+  if (req.url.startsWith('/nodes/create') && req.method === 'POST') {
+    createServer();
+    res.writeHead(200);
+  } else {
+    res.writeHead(404);
+  }
+  res.end();
+}
+
+const bootstrap = () => {
+  createServer('--first');
+  http.createServer(requestHandler).listen(clusterHttpPort);
+}
+
+bootstrap();

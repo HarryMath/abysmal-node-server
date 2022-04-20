@@ -2,13 +2,15 @@
   "name": "game-server",
   "version": "1.0.0",
   "description": "",
-  "main": "tcpServer.js",
+  "main": "updServer2.js",
   "engines": {
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "node tcpServer.js",
-    "startUpd": "node udpServer.js"
+    "start": "node cluster/node.controller.js",
+    "testServer": "node server/server.js port:8081",
+    "testOld": "node updServer2.js",
+    "startTest": "node child.js"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +19,7 @@
     "@types/node": "^16.7.2"
   },
   "dependencies": {
-    "bson": "^4.5.2",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "axios": "^0.26.1"
   }
 }
