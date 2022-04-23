@@ -1,6 +1,7 @@
 const getLong = str => {
   const buffer = Buffer.alloc(8);
-  buffer.write(str, 8 - str.length, 'ascii');
+  // buffer.write(str, 8 - str.length, 'ascii');
+  buffer.fill(str, 8 - str.length, 8, 'ascii');
   return parseInt(buffer.readBigInt64BE());
 };
 

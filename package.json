@@ -2,15 +2,13 @@
   "name": "game-server",
   "version": "1.0.0",
   "description": "",
-  "main": "updServer2.js",
+  "main": "cluster/node.controller.js",
   "engines": {
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "node cluster/node.controller.js",
-    "testServer": "node server/server.js port:8081",
-    "testOld": "node updServer2.js",
-    "startTest": "node child.js"
+    "start": "pm2 start cluster/node.controller.js",
+    "testServer": "node server/server.js port:8081"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +17,7 @@
     "@types/node": "^16.7.2"
   },
   "dependencies": {
+    "pm2": "^5.2.0",
     "esm": "^3.2.25",
     "axios": "^0.26.1"
   }
