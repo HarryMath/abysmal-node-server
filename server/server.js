@@ -26,8 +26,7 @@ function checkActivity() {
   if (timeDiff > maxTimeout) {
     console.log(`no active players for ${timeDiff} ms. closing server.`)
     clearInterval(scheduler);
-    httpServer.close();
-    udpServer.close();
+    closeServer();
   }
 }
 
@@ -59,7 +58,7 @@ function createHttpServer() {
 function createUdpServer() {
   const server = udp.createSocket('udp4');
   server.on('listening', () => {
-    registerServer();
+    registerServer().then(response => console.log(response));
   });
   server.on('message', (message, info) => {
     handleData(message, info, server);
@@ -141,6 +140,12 @@ function parseArguments() {
     throw new Error('udpPort must be specified');
   }
   return {udpPort: port, isFirstServer};
+}
+
+function closeServer() {
+  axios.delete(`${mainServer}/nodes?port=${httpServer.address().port}`);
+  httpServer.close();
+  udpServer.close();
 }
 
 class Player {
