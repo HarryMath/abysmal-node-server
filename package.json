@@ -7,7 +7,7 @@
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "pm2 start cluster/node.controller.js",
+    "start": "pm2 stop all & pm2 start cluster/node.controller.js",
     "testServer": "node server/server.js port:8081"
   },
   "keywords": [],
