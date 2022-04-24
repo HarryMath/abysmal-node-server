@@ -1,7 +1,7 @@
 const http = require('http');
 const { exec } = require('child_process');
 
-const clusterHttpPort = 22;
+const clusterHttpPort = 8079;
 let port = 8081;
 
 const handleServerLogs = (port) => {
@@ -40,8 +40,8 @@ const requestHandler = function (req, res) {
 }
 
 const bootstrap = () => {
-  createServer('--first');
   http.createServer(requestHandler).listen(clusterHttpPort);
+  createServer('--first');
 }
 
 bootstrap();
