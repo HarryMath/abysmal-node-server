@@ -133,7 +133,7 @@ function parseArguments() {
     const arg = process.argv[i].toLowerCase().trim();
     if (arg.startsWith('port:')) {
       port = parseInt(arg.replace('port:', ''));
-    } else if (arg === '--first') {
+    } else if (arg === 'first') {
       isFirstServer = true;
     }
   }

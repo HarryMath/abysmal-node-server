@@ -20,7 +20,8 @@ const handleServerLogs = (port) => {
 
 const createServer = ( arguments = '' ) => {
   const serverPort = port++;
-  const command = `node server/server.js port:${serverPort} ${arguments}`.trim();
+  // const command = `node server/server.js port:${serverPort} ${arguments}`.trim();
+  const command = `pm2 start server/server.js -- port:${serverPort} ${arguments}`.trim();
   console.debug('trying to launch server: ' + command);
   let process = exec(command, handleServerLogs(serverPort));
   process.on('exit', code => {
@@ -41,7 +42,7 @@ const requestHandler = function (req, res) {
 
 const bootstrap = () => {
   http.createServer(requestHandler).listen(clusterHttpPort);
-  createServer('--first');
+  createServer('first');
 }
 
 bootstrap();
