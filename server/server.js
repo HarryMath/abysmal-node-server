@@ -58,7 +58,7 @@ function createHttpServer() {
 function createUdpServer() {
   const server = udp.createSocket('udp4');
   server.on('listening', () => {
-    registerServer().then(response => console.log(response));
+    registerServer().then(response => console.log(response.status));
   });
   server.on('message', (message, info) => {
     handleData(message, info, server);
