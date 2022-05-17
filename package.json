@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "pm2 start cluster/node.controller.js",
-    "testServer": "node server/server.js port:8081"
+    "start-udp-server": "node server/server.js port:8081",
+    "test-server": "node test.js",
+    "test-encoder": "node server/encoder.js"
   },
   "keywords": [],
   "author": "",

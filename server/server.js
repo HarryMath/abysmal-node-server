@@ -157,14 +157,8 @@ class Player {
 
   update(dataPackage) {
     const encodedTimestamp = dataPackage
-      .subarray(dataPackage.lastIndexOf(-127) + 1, dataPackage.length);
-    // const data = dataPackage
-    //   .subarray(6, dataPackage.length - 1)
-    //   .toString().split(',');
-    //this.timestamp = encoder.getLong(data[11]);
-    //console.log(encodedTimestamp.toString());
+      .subarray(dataPackage.lastIndexOf(-12) + 1, dataPackage.length);
     this.timestamp = encoder.getLong(encodedTimestamp);
-    //console.log(this.timestamp);
   }
 
   isActive() {
