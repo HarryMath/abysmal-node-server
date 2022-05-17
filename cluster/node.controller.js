@@ -33,6 +33,7 @@ const createServer = ( arguments = '' ) => {
 const requestHandler = function (req, res) {
   if (req.url.startsWith('/nodes/create') && req.method === 'POST') {
     createServer();
+    console.log('new server requested');
     res.writeHead(200);
   } else {
     res.writeHead(404);

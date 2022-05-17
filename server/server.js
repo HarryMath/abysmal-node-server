@@ -112,12 +112,10 @@ function handleData(data, playerInfo, server) {
         }
       }
     }
-    if (data.includes('state', 0)) {
-      if (!playerFound) {
-        console.log(`new player: ${playerInfo.address}:${playerInfo.port}`);
-        players.push(new Player(data, playerInfo));
-        sendPlayersAmount();
-      }
+    if (data.includes('state', 0) && !playerFound) {
+      console.log(`new player: ${playerInfo.address}:${playerInfo.port}`);
+      players.push(new Player(data, playerInfo));
+      sendPlayersAmount();
     }
   } catch (ignore) {
     console.log(`parsing error: ${data}`);
