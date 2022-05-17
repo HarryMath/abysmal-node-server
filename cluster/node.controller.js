@@ -2,7 +2,6 @@ const http = require('http');
 const { exec } = require('child_process');
 
 const clusterHttpPort = 8079;
-let port = 8081;
 
 const handleServerLogs = (port) => {
   return (err, stdout, stderr) => {
@@ -19,7 +18,7 @@ const handleServerLogs = (port) => {
 };
 
 const createServer = ( arguments = '' ) => {
-  const serverPort = port++;
+  const serverPort = getFreePort();
   // const command = `node server/server.js port:${serverPort} ${arguments}`.trim();
   const command = `pm2 start server/server.js -- port:${serverPort} ${arguments}`.trim();
   console.debug('trying to launch server: ' + command);
@@ -44,6 +43,17 @@ const requestHandler = function (req, res) {
 const bootstrap = () => {
   http.createServer(requestHandler).listen(clusterHttpPort);
   createServer('first');
+}
+
+const getFreePort = () => {
+  const server = http.createServer(((req, res) => {
+    res.writeHead(404);
+    res.end();
+  }));
+  server.listen(0);
+  const freePort = server.address().port;
+  server.close();
+  return freePort;
 }
 
 bootstrap();
