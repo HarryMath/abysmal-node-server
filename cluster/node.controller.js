@@ -18,13 +18,12 @@ const handleServerLogs = (port) => {
 };
 
 const createServer = ( arguments = '' ) => {
-  const serverPort = getFreePort();
-  // const command = `node server/server.js port:${serverPort} ${arguments}`.trim();
-  const command = `pm2 start server/server.js -- port:${serverPort} ${arguments}`.trim();
+  const port = getFreePort();
+  const command = `pm2 start server/server.js --name server${port} -- port:${port} ${arguments}`.trim();
   console.debug('trying to launch server: ' + command);
-  let process = exec(command, handleServerLogs(serverPort));
+  let process = exec(command, handleServerLogs(port));
   process.on('exit', code => {
-    console.debug(`node on port ${serverPort} closed with code ${code}`);
+    console.debug(`node on port ${port} closed with code ${code}`);
     process = null;
   });
 };
