@@ -9,6 +9,7 @@
   "scripts": {
     "start": "pm2 start cluster/node.controller.js",
     "start-udp-server": "node server/server.js port:8081",
+    "clear-servers": "pm2 stop all & pm2 delete all",
     "test-server": "node test.js",
     "test-encoder": "node server/encoder.js"
   },
