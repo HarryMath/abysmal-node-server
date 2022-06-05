@@ -125,13 +125,13 @@ function handleData(data, playerInfo) {
       else {
         console.log(`removed player: ${player.info.address}:${player.info.port}`);
         players.splice(i--, 1);
-        //sendPlayersAmount();
+        sendPlayersAmount();
       }
     }
     if (isStatePackage && !playerFound) {
       console.log(`new player: ${playerInfo.address}:${playerInfo.port}`);
       players.push(new Player(data, playerInfo));
-      //sendPlayersAmount();
+      sendPlayersAmount();
     }
   } catch (ignore) {
     console.log(`parsing error: ${data}`);
