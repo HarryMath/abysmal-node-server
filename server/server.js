@@ -7,6 +7,9 @@ const mainServer = "https://abysmal-space.herokuapp.com";
 const maxTimeout = 10 * 1000; /*  10 s  */
 const checkInterval = 60 * 1000; /*  1 min  */
 
+const maxRadarPower = 120;
+const maxViewSize = 40;
+
 const players = [];
 let lastPackageTime = 0;
 
@@ -61,7 +64,7 @@ function createUdpServer() {
     registerServer().then(response => console.log(response.status));
   });
   server.on('message', (message, info) => {
-    handleData(message, info, server);
+    handleData(message, info);
   });
   server.bind(udpPort);
   return server;
@@ -86,36 +89,49 @@ async function sendPlayersAmount() {
   });
 }
 
-function handleData(data, playerInfo, server) {
+function handleData(data, playerInfo) {
   try {
-    let player, info;
+    let player;
     let playerFound = false;
+    const isStatePackage = Player.isInstance(data);
+    const x = isStatePackage ? encoder.getFloat(data.subarray(8, 12)) : null;
+    const y = isStatePackage ? encoder.getFloat(data.subarray(12, 16)) : null;
+    const simplifiedData = isStatePackage ? data.subarray(0, 16) : null;
     for (let i = 0; i < players.length; i++) {
       player = players[i];
-      info = player.info;
-      if (info.address === playerInfo.address && info.port === playerInfo.port) {
+      if (player.isTheSame(playerInfo)) {
         // if it is current player just update it's state
-        if (data.includes('state', 0)) {
+        if (isStatePackage) {
           player.update(data);
           playerFound = true;
           lastPackageTime = new Date().getTime();
         } else {
-          server.send(data, info.port, info.address);
-        }
-      } else {
-        if (player.isActive()) {
-          server.send(data, info.port, info.address);
-        } else {
-          console.log(`removed player: ${info.address}:${info.port}`);
-          players.splice(i--, 1);
-          sendPlayersAmount();
+          player.send(data);
         }
       }
+      else if (player.isActive()) {
+        if (isStatePackage) {
+          if (player.isReachable(x, y)) {
+            if (player.isClose(x, y)) {
+              player.send(data);
+            } else if (Math.random() < 0.3) {
+              player.send(simplifiedData);
+            }
+          }
+        } else {
+          player.send(data);
+        }
+      }
+      else {
+        console.log(`removed player: ${player.info.address}:${player.info.port}`);
+        players.splice(i--, 1);
+        //sendPlayersAmount();
+      }
     }
-    if (data.includes('state', 0) && !playerFound) {
+    if (isStatePackage && !playerFound) {
       console.log(`new player: ${playerInfo.address}:${playerInfo.port}`);
       players.push(new Player(data, playerInfo));
-      sendPlayersAmount();
+      //sendPlayersAmount();
     }
   } catch (ignore) {
     console.log(`parsing error: ${data}`);
@@ -153,13 +169,36 @@ class Player {
     this.info = info;
   }
 
+  static isInstance(data) {
+    return data.length === 50;
+  }
+
+  send(data) {
+    udpServer.send(data, this.info.port, this.info.address);
+  }
+
+  isTheSame(networkInfo) {
+    return this.info.address === networkInfo.address &&
+      this.info.port === networkInfo.port;
+  }
+
   update(dataPackage) {
-    const encodedTimestamp = dataPackage
-      .subarray(dataPackage.lastIndexOf(-12) + 1, dataPackage.length);
-    this.timestamp = encoder.getLong(encodedTimestamp);
+    this.timestamp = encoder.getLong(dataPackage.subarray(42, 50));
+    this.x = encoder.getFloat(dataPackage.subarray(8, 12));
+    this.y = encoder.getFloat(dataPackage.subarray(12, 16));
   }
 
   isActive() {
     return lastPackageTime - this.timestamp < maxTimeout;
+  }
+
+  isReachable(px, py) {
+    return Math.abs(this.x - px) < maxRadarPower &&
+      Math.abs(this.y - py) < maxRadarPower;
+  }
+
+  isClose(px, py) {
+    return Math.abs(this.x - px) < maxViewSize &&
+      Math.abs(this.y - py) < maxViewSize
   }
 }
