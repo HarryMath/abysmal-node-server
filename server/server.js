@@ -8,7 +8,14 @@ const maxTimeout = 10 * 1000; /*  10 s  */
 const checkInterval = 60 * 1000; /*  1 min  */
 
 const maxRadarPower = 120;
-const maxViewSize = 40;
+const maxViewSizes = [
+  28 * 1.4,
+  28 * 1.9,
+  28 * 2.3,
+  28,
+  28 * 2,
+  28 * 2.3,
+];
 
 const players = [];
 let lastPackageTime = 0;
@@ -82,11 +89,13 @@ async function registerServer() {
 }
 
 async function sendPlayersAmount() {
-  return await axios.patch(`${mainServer}/nodes`, {
-    ip: '', udpPort, seed,
-    tcpPort: httpServer.address().port,
-    playersAmount: players.length
-  });
+  try {
+    return await axios.patch(`${mainServer}/nodes`, {
+      ip: '', udpPort, seed,
+      tcpPort: httpServer.address().port,
+      playersAmount: players.length
+    });
+  } catch (ignore) {}
 }
 
 function handleData(data, playerInfo) {
@@ -112,9 +121,9 @@ function handleData(data, playerInfo) {
       else if (player.isActive()) {
         if (isStatePackage) {
           if (player.isReachable(x, y)) {
-            if (player.isClose(x, y)) {
+            if (player.isVisible(x, y)) {
               player.send(data);
-            } else if (Math.random() < 0.3) {
+            } else if (Math.random() < 0.25) {
               player.send(simplifiedData);
             }
           }
@@ -157,7 +166,9 @@ function parseArguments() {
 }
 
 function closeServer() {
-  axios.delete(`${mainServer}/nodes?port=${httpServer.address().port}`);
+  axios.delete(`${mainServer}/nodes?port=${httpServer.address().port}`).catch(e => {
+    console.log(e);
+  });
   httpServer.close();
   udpServer.close();
 }
@@ -167,6 +178,7 @@ class Player {
   constructor(dataPackage, info) {
     this.update(dataPackage);
     this.info = info;
+    this.shipId = encoder.getLong(dataPackage.subarray(4, 8));
   }
 
   static isInstance(data) {
@@ -197,8 +209,8 @@ class Player {
       Math.abs(this.y - py) < maxRadarPower;
   }
 
-  isClose(px, py) {
-    return Math.abs(this.x - px) < maxViewSize &&
-      Math.abs(this.y - py) < maxViewSize
+  isVisible(px, py) {
+    return Math.abs(this.x - px) < (maxViewSizes[this.shipId] || 40) &&
+      Math.abs(this.y - py) < (maxViewSizes[this.shipId] || 40)
   }
 }
